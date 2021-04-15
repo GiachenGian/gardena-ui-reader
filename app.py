@@ -39,12 +39,20 @@ def getVersion(gardenaUiReader):
     writeFile(version)
     return version
 
+def getSensorData(gardenaUiReader):
+    executeAction(0, 'Login', gardenaUiReader.login)
+    data = executeAction(1, 'Read Sensor Data', gardenaUiReader.getSensorData)
+    
+    return data
+
 def writeLog(text):
     log = time.strftime("%Y%m%d-%H%M%S") + '; '+ text + '\n'
     fileName = 'log.txt'
     file = open(fileName, "a")
     file.write(log)
     file.close()
+
+
 
 #                                           #
 #******************Methods******************#
@@ -56,7 +64,7 @@ if __name__ == '__main__':
     #Setup
     try:
         config = configparser.RawConfigParser()
-        config.read_file(open(r'config.txt'))
+        config.read_file(open(r'appConfig.config'))
         url = config.get('GardenaLogin', 'url')
         username = config.get('GardenaLogin', 'username')
         password = config.get('GardenaLogin', 'password')    
@@ -73,16 +81,22 @@ if __name__ == '__main__':
         gardenaUiReaderCore = GardenaUiReaderCore(url, username, password)
 
         #Get Version
-        version = getVersion(gardenaUiReaderCore)
+        #version = getVersion(gardenaUiReaderCore)
 
+        #Get temperature
+        sensorData = getSensorData(gardenaUiReaderCore)
+        
         print('Step 4: Output Results')
         print('\n')
         print('----------------------------')
-        print('Result 1 | Version; ' + version.split(':')[1].replace('\n',''))
+        #print('Result 1 | Version; ' + version.split(':')[1].replace('\n',''))
         print('----------------------------')
-        print('Result 2 | Temperatur; 42')
+        print('Result 2 | Date;         '+ str(sensorData[4]) )
         print('----------------------------')
-        print('Result 3 | Feuchtigkeit; 42')
+        print('Result 2 | Temperatur;   '+ str(sensorData[0]) )
+        print('----------------------------')
+        print('Result 2 | Feuchtigkeit; '+ str(sensorData[3]) )
+        print('----------------------------')
         
     except Exception as e:
         print(e)

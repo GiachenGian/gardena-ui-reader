@@ -11,9 +11,9 @@ class GardenaUiReaderCore:
         self.username = username
         options = webdriver.ChromeOptions()
         #Headless mode runs chrome in background
-        options.add_argument('headless')
+        #options.add_argument('headless')
         #Window size must be set for id recognition in headless mode
-        options.add_argument('window-size=1920x1080') 
+        #options.add_argument('window-size=1920x1080') 
         self.browser = webdriver.Chrome(options=options)
 
     def dispose(self):
@@ -44,7 +44,30 @@ class GardenaUiReaderCore:
                 break;
 
         time.sleep(2);
+		
+    def getSensorData(self):
+        items = self.browser.find_elements_by_class_name('uk-position-top-right')
 
+        for item in items:
+            item.click()
+            break;
+        time.sleep(2);
+
+        items = self.browser.find_elements_by_tag_name('h1')
+
+        for item in items:
+            if 'Hochbeet Sensor' in item.text:
+                item.click()
+                break;
+        time.sleep(2);
+
+        detas = self.browser.find_elements_by_xpath('//*[@data-info]')
+        result = []
+        for i in detas:
+            print(i.get_attribute('data-info'))
+            result.append(i.get_attribute('data-info'))
+        return result
+		
     def navigateToVersions(self):
         versions = self.browser.find_element_by_id('link-versions')
         versions.click()
